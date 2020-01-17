@@ -2,86 +2,87 @@ package Assignments.Assignment1;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 
-public class PaintClient {
+public class PaintClient{
+    public static void main(String [] args){
 
-    public static void main(String[] args) {
-        //Variables
-        boolean menuVisible = true;
-        //
-
-        //Create and configure JFrame
-        JFrame painterFrame = new JFrame();
-        painterFrame.setTitle("AF - Painter");
-        painterFrame.setSize(640, 480);
-        painterFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        painterFrame.setVisible(true);
-        painterFrame.setLayout(new FlowLayout());
-
-
-        //Create menu panel and painter panel
-        JPanel menuPanel = new JPanel();
+        //Declaring JComponents
         JPanel painterPanel = new JPanel();
         JPanel canvasPanel = new JPanel();
-        //Create combo box and continue button
-        JComboBox brushBox = new JComboBox();
-        JButton continueBtn = new JButton("Switch to Canvas");
-        JButton palletteBtn = new JButton("Back to Pallette");
+        JPanel optionsPanel = new JPanel();
+        JComboBox<String> brushBox = new JComboBox<>();
         JColorChooser cc = new JColorChooser();
+        JFrame painterFrame = new JFrame();
+        JFrame advancedOptions = new JFrame();
+        JButton optionsBtn = new JButton("Advanced Options");
+        JSlider sizeSlider = new JSlider();
 
-        //Adding all components to the JPanels
-        menuPanel.add(brushBox);
-        menuPanel.add(continueBtn);
-        menuPanel.setVisible(true);
+        /* Configuring JComboBox */
+        brushBox.addItem("Rectangle");
+        brushBox.addItem("Oval");
 
-        //Adding panels to the JFrame
-        painterFrame.add(menuPanel);
-        painterFrame.add(painterPanel);
-        painterFrame.add(canvasPanel);
-        painterPanel.add(palletteBtn);
-        painterPanel.setVisible(false);
-        canvasPanel.setVisible(false);
-        canvasPanel.setBackground(Color.red);
-        menuPanel.add(cc);
-        canvasPanel.setPreferredSize(new Dimension(500, 300));
+        /* Configuring JColourChooser */
+        cc.setColor(Color.BLACK);
 
-        /*
-        Action Listeners
-        Continue Button
-        Pallatte Button
-        Canvas Panel(for drawing)
-         */
-        continueBtn.addActionListener(new ActionListener() {
+        /* Configuring JSlider */
+        sizeSlider.setMinimum(10);
+        sizeSlider.setMaximum(40);
+        sizeSlider.setValue(10);
+
+        /* Configuring JPanels */
+        //Painter Options Panel
+        painterPanel.add(brushBox);
+        painterPanel.add(optionsBtn);
+        painterPanel.setVisible(true);
+        //Canvas Panel
+        canvasPanel.setPreferredSize(new Dimension(300, 200));
+        canvasPanel.setVisible(true);
+        canvasPanel.setBackground(Color.WHITE);
+
+        //Menu Panel
+        optionsPanel.add(cc);
+        optionsPanel.add(sizeSlider);
+
+        //Configuring JFrames
+        //Painter Frame
+        painterFrame.setSize(800, 800);
+        painterFrame.setLayout(new BorderLayout());
+        painterFrame.add(painterPanel, BorderLayout.NORTH);
+        painterFrame.add(canvasPanel, BorderLayout.CENTER);
+        painterFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        //Menu Frame
+        advancedOptions.setSize(700, 400);
+        advancedOptions.add(optionsPanel);
+        //Setting frame to visible
+        painterFrame.setVisible(true);
+
+        /* Action Listeners */
+
+        //Options Button Listener
+        optionsBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                painterPanel.setVisible(true);
-                canvasPanel.setVisible(true);
-                menuPanel.setVisible(false);
+                Graphics g = advancedOptions.getGraphics();
+                advancedOptions.setVisible(true);
+                //Updates the graphics once the frame is visible
+                advancedOptions.update(g);
             }
         });
-
-        palletteBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                painterPanel.setVisible(false);
-                canvasPanel.setVisible(false);
-                menuPanel.setVisible(true);
-            }
-        });
-
+        //Canvas Mouse and Mouse Motion Listeners
         canvasPanel.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent mouseEvent) {
                 //Check to see which of the two options in the Combobox are selected
-                System.out.println("We are drawing on the screen! :D");
-                Graphics g = canvasPanel.getGraphics();
-                //TODO Change this to be a variable size
-                g.drawRect(mouseEvent.getX(), mouseEvent.getY(), 2, 2);
-
+                Graphics g = canvasPanel.getGraphics(); //Setting the graphics to that of the panel
+                if(brushBox.getSelectedItem().equals("Rectangle")){
+                    g.setColor(cc.getColor());
+                    g.fillRect(mouseEvent.getX(), mouseEvent.getY(), sizeSlider.getValue(), sizeSlider.getValue());
+                }else{
+                    g.setColor(cc.getColor());
+                    g.fillOval(mouseEvent.getX(), mouseEvent.getY(), sizeSlider.getValue(), sizeSlider.getValue());
+                }
             }
 
             @Override
@@ -89,7 +90,42 @@ public class PaintClient {
                 /*Ignore, no code here*/
             }
         });
-    
-    }
 
+        canvasPanel.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                System.out.println("We are drawing on the screen! :D");
+                Graphics g = canvasPanel.getGraphics();
+                System.out.println(brushBox.getSelectedItem());
+                if(brushBox.getSelectedItem().equals("Rectangle")){
+                    g.setColor(cc.getColor());
+                    g.fillRect(mouseEvent.getX(), mouseEvent.getY(), 10, 10);
+                }else{
+                    g.setColor(cc.getColor());
+                    g.fillOval(mouseEvent.getX(), mouseEvent.getY(), 10, 10);
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent mouseEvent) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent mouseEvent) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent mouseEvent) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent mouseEvent) {
+
+            }
+        });
+
+    }
 }
