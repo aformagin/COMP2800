@@ -1,6 +1,9 @@
 package Assignments.Assignment1;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.plaf.SliderUI;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -76,13 +79,7 @@ public class PaintClient{
             public void mouseDragged(MouseEvent mouseEvent) {
                 //Check to see which of the two options in the Combobox are selected
                 Graphics g = canvasPanel.getGraphics(); //Setting the graphics to that of the panel
-                if(brushBox.getSelectedItem().equals("Rectangle")){
-                    g.setColor(cc.getColor());
-                    g.fillRect(mouseEvent.getX(), mouseEvent.getY(), sizeSlider.getValue(), sizeSlider.getValue());
-                }else{
-                    g.setColor(cc.getColor());
-                    g.fillOval(mouseEvent.getX(), mouseEvent.getY(), sizeSlider.getValue(), sizeSlider.getValue());
-                }
+                mousePaint(mouseEvent, g, brushBox, cc, sizeSlider);
             }
 
             @Override
@@ -94,16 +91,9 @@ public class PaintClient{
         canvasPanel.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
-                System.out.println("We are drawing on the screen! :D");
                 Graphics g = canvasPanel.getGraphics();
                 System.out.println(brushBox.getSelectedItem());
-                if(brushBox.getSelectedItem().equals("Rectangle")){
-                    g.setColor(cc.getColor());
-                    g.fillRect(mouseEvent.getX(), mouseEvent.getY(), 10, 10);
-                }else{
-                    g.setColor(cc.getColor());
-                    g.fillOval(mouseEvent.getX(), mouseEvent.getY(), 10, 10);
-                }
+                mousePaint(mouseEvent, g, brushBox, cc, sizeSlider);
             }
 
             @Override
@@ -127,5 +117,23 @@ public class PaintClient{
             }
         });
 
+    }
+
+    /**
+     * mousePaint - Handles the painting of the screen
+     * @param mouseEvent - Mouse action event
+     * @param g - graphics object to control the colour and drawing
+     * @param brushBox - JCombobox with the select
+     * @param cc - JColorChooser to adjust the colour
+     * @param sizeSlider - The JSlider to adjust the size
+     */
+    private static void mousePaint(MouseEvent mouseEvent, Graphics g, JComboBox<String> brushBox, JColorChooser cc, JSlider sizeSlider) {
+        if(brushBox.getSelectedItem().equals("Rectangle")){
+            g.setColor(cc.getColor());
+                g.fillRect(mouseEvent.getX(), mouseEvent.getY(), sizeSlider.getValue(), sizeSlider.getValue());
+        }else{
+            g.setColor(cc.getColor());
+            g.fillOval(mouseEvent.getX(), mouseEvent.getY(), sizeSlider.getValue(), sizeSlider.getValue());
+        }
     }
 }
