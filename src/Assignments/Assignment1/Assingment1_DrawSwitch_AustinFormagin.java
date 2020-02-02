@@ -1,13 +1,24 @@
 package Assignments.Assignment1;
 
+//Austin Formagin
+//105043250
+//Due: 2020-01-19
+
+/*
+Use JPaneldrawing area to allow users to drag the mouse
+to draw either an oval or a rectangle, according to the
+user's choice from a JComboBox.
+
+I was not sure if this was supposed to be the paint like program she showed in class
+or if it was supposed to only make the shapes? So I tried to do both.
+*/
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.plaf.SliderUI;
 import java.awt.*;
 import java.awt.event.*;
 
-public class PaintClient{
+public class Assingment1_DrawSwitch_AustinFormagin {
+    private static boolean drawMode = false;
+
     public static void main(String [] args){
 
         //Declaring JComponents
@@ -18,7 +29,8 @@ public class PaintClient{
         JColorChooser cc = new JColorChooser();
         JFrame painterFrame = new JFrame();
         JFrame advancedOptions = new JFrame();
-        JButton optionsBtn = new JButton("Advanced Options");
+        JButton optionsBtn = new JButton("Advanced Options(Size/Colour)");
+        JButton drawModeBtn = new JButton("Toggle Paint Mode");
         JSlider sizeSlider = new JSlider();
 
         /* Configuring JComboBox */
@@ -36,6 +48,7 @@ public class PaintClient{
         /* Configuring JPanels */
         //Painter Options Panel
         painterPanel.add(brushBox);
+        painterPanel.add(drawModeBtn);
         painterPanel.add(optionsBtn);
         painterPanel.setVisible(true);
         //Canvas Panel
@@ -77,9 +90,10 @@ public class PaintClient{
         canvasPanel.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent mouseEvent) {
-                //Check to see which of the two options in the Combobox are selected
-                Graphics g = canvasPanel.getGraphics(); //Setting the graphics to that of the panel
-                mousePaint(mouseEvent, g, brushBox, cc, sizeSlider);
+                if(drawMode){
+                    Graphics g = canvasPanel.getGraphics(); //Setting the graphics to that of the panel
+                    mousePaint(mouseEvent, g, brushBox, cc, sizeSlider);
+                }
             }
 
             @Override
@@ -98,7 +112,6 @@ public class PaintClient{
 
             @Override
             public void mousePressed(MouseEvent mouseEvent) {
-
             }
 
             @Override
@@ -117,6 +130,17 @@ public class PaintClient{
             }
         });
 
+        drawModeBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if(!drawMode){
+                    drawMode = true;
+                }else{
+                    drawMode = false;
+                }
+            }
+        });
+
     }
 
     /**
@@ -130,10 +154,12 @@ public class PaintClient{
     private static void mousePaint(MouseEvent mouseEvent, Graphics g, JComboBox<String> brushBox, JColorChooser cc, JSlider sizeSlider) {
         if(brushBox.getSelectedItem().equals("Rectangle")){
             g.setColor(cc.getColor());
+                //Creating the rectangle
                 g.fillRect(mouseEvent.getX(), mouseEvent.getY(), sizeSlider.getValue(), sizeSlider.getValue());
         }else{
             g.setColor(cc.getColor());
             g.fillOval(mouseEvent.getX(), mouseEvent.getY(), sizeSlider.getValue(), sizeSlider.getValue());
         }
     }
+
 }
